@@ -1,0 +1,95 @@
+---
+# *: enable all checks. every other check below is disabled
+# [-abseil-*,...]: all checks of specific projects
+# -hicpp-braces-around-statements: duplicate
+# -modernize-use-trailing-return-type: ugly
+# -readability-magic-numbers: tired of it
+# -cppcoreguidelines-avoid-magic-numbers: duplicate
+# -cppcoreguidelines-pro-bounds-array-to-pointer-decay: duplicate
+# -cppcoreguidelines-non-private-member-variables-in-classes: annoying
+# -misc-non-private-member-variables-in-classes: duplicate of the above
+# -cppcoreguidelines-avoid-c-arrays: C arrays are still useful
+# -modernize-avoid-c-arrays: duplicate
+# -hicpp-avoid-c-arrays: duplicate
+# -hicpp-no-array-decay: flags macros like assert()
+# -readability-implicit-bool-conversion: annoying and stupid
+# -readability-identifier-length: I don't remember why
+# -hicpp-avoid-goto: duplicate
+# -readability-function-cognitive-complexity: c++ programmers can sustain it
+
+Checks: '*,-abseil-*,-altera-*,-android-*,-darwin-*,-fuchsia-*,-google-*,-linuxkernel-*,-llvm-*,-llvmlibc-*,-mpi-*,-objc-*,-openmp-*,-zircon-*,-modernize-use-trailing-return-type,-hicpp-braces-around-statements,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-non-private-member-variables-in-classes,-misc-non-private-member-variables-in-classes,-cppcoreguidelines-avoid-c-arrays,-modernize-avoid-c-arrays,-hicpp-avoid-c-arrays,-hicpp-no-array-decay,-readability-implicit-bool-conversion,-readability-identifier-length,-hicpp-avoid-goto,-readability-function-cognitive-complexity'
+WarningsAsErrors: ''
+FormatStyle: 'file' # use .clang-format
+UseColor: true # force colors, since release 11
+CheckOptions:
+  # Minimum 2 lines to suggest {} around if/for.
+  - { key: readability-braces-around-statements.ShortStatementLines, value: '2' }
+
+  # Don't diagnose when all members are public (such as in structs).
+  - { key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic, value: '1' }
+
+  # Naming convention (keys from [1]):
+  - { key: readability-identifier-naming.AbstractClassCase, value: 'CamelCase' }
+  # NOTE: this may lead to errors in template specializations. Disable if necessary.
+  - { key: readability-identifier-naming.AggressiveDependentMemberLookup, value: '1' }
+  - { key: readability-identifier-naming.ClassCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.ClassConstantCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ClassMemberCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ClassMethodCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ConstantCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ConstantMemberCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ConstantParameterCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ConstantPointerParameterCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ConstexprFunctionCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ConstexprMethodCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ConstexprVariableCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.EnumCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.EnumConstantCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.FunctionCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.GlobalConstantCase, value: 'UPPER_CASE' }
+  - { key: readability-identifier-naming.GlobalConstantPointerCase, value: 'UPPER_CASE' }
+  - { key: readability-identifier-naming.GlobalFunctionCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.GlobalPointerCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.GlobalVariableCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.IgnoreMainLikeFunctions, value: '1' }
+  - { key: readability-identifier-naming.InlineNamespaceCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.LocalConstantCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.LocalConstantPointerCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.LocalPointerCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.LocalVariableCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.MacroDefinitionCase, value: 'UPPER_CASE' }
+  - { key: readability-identifier-naming.MemberCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.MethodCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.NamespaceCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ParameterCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ParameterPackCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.PointerParameterCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.PrivateMemberCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.PrivateMemberSuffix, value: '_' }
+  - { key: readability-identifier-naming.PrivateMethodCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ProtectedMemberCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ProtectedMethodCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.PublicMemberCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.PublicMethodCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.ScopedEnumConstantCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.StaticCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.StaticVariableCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.StructCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.TemplateParameterCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.TemplateTemplateParameterCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.TypeAliasCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.TypedefCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.TypeTemplateParameterCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.UnionCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.ValueTemplateParameterCase, value: 'CamelCase' }
+  - { key: readability-identifier-naming.VariableCase, value: 'lower_case' }
+  - { key: readability-identifier-naming.VirtualMethodCase, value: 'lower_case' }
+
+  # Allow numbers 0-10 to be used as magic numbers.
+  - { key: readability-magic-numbers.IgnoredIntegerValues, value: '1;2;3;4;5;6;7;8;9;10;' }
+...
+
+# [1] https://releases.llvm.org/12.0.1/tools/clang/tools/extra/docs/clang-tidy/checks/readability-identifier-naming.html
+
+# List of checks from another, older project, kept for reference:
+# Checks: '*,-abseil-*,-altera-*,-android-*,-darwin-*,-fuchsia-*,-google-*,-linuxkernel-*,-llvm-*,-llvmlibc-*,-mpi-*,-objc-*,-openmp-*,-zircon-*,-modernize-use-trailing-return-type,-cppcoreguidelines-avoid-magic-numbers,-readability-magic-numbers,-readability-function-cognitive-complexity,-hicpp-braces-around-statements,-readability-implicit-bool-conversion,-hicpp-special-member-functions,-misc-non-private-member-variables-in-classes,-modernize-loop-convert,-hicpp-use-auto,-modernize-use-auto'

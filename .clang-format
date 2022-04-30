@@ -1,0 +1,25 @@
+---
+BasedOnStyle: LLVM
+ColumnLimit: 100
+Standard: 'c++20'
+IndentWidth: 4
+PointerAlignment: Left
+IncludeBlocks: Regroup
+# Thanks https://stackoverflow.com/a/55794142/10986054
+IncludeCategories:
+  # Headers in <> without extension.
+  - Regex: '<([A-Za-z0-9\Q/-_\E])+>'
+    Priority: 4
+  # Headers in <> from specific external libraries.
+  - Regex: '<(gtest|boost)\/'
+    Priority: 3
+  # Headers in <> with extension.
+  - Regex: '<([A-Za-z0-9.\Q/-_\E])+>'
+    Priority: 2
+  # Headers in "" with extension.
+  - Regex: '"([A-Za-z0-9.\Q/-_\E])+"'
+    Priority: 1
+
+#BreakStringLiterals: false
+#AlwaysBreakTemplateDeclarations: Yes
+...
