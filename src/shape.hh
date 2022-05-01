@@ -1,18 +1,30 @@
 #pragma once
 
 #include "circle_operations.hh"
-#include "shape_operations.hh"
 #include "square_operations.hh"
 
 #include <memory>
+#include <type_traits>
+#include <utility>
 
 class Shape {
+    // Shape's interface is implemented as hidden friends.
+    friend void draw(Shape const& shape) {
+        // Dispatch in ShapeModel<ConcreteShape>::draw().
+        shape.pimpl_->do_draw();
+    }
+
     class ShapeConcept {
       public:
         virtual ~ShapeConcept() = 0;
-        [[nodiscard]] virtual std::unique_ptr<ShapeConcept> clone() const = 0;
 
-        virtual void draw() const = 0;
+        // Shape's interface declaration. The real functions containing implementations are named
+        // without the do_ prefix, but in order to facilitate ADL in finding the free functions
+        // implementing the interface, the virtual interface functions must be named differently.
+        virtual void do_draw() const = 0;
+
+        // Make ShapeConcept's children copyable through ShapeConcept pointer.
+        [[nodiscard]] virtual std::unique_ptr<ShapeConcept> clone() const = 0;
 
       protected:
         ShapeConcept() = default;
@@ -22,16 +34,15 @@ class Shape {
         ShapeConcept& operator=(ShapeConcept const&) = default;
     };
 
-    template <typename T> class ShapeModel final : public ShapeConcept {
+    template <typename ConcreteShape> class ShapeModel final : public ShapeConcept {
       public:
-        template <typename U>
-            requires(!std::same_as<T, U>)
-        explicit ShapeModel( // NOLINT(bugprone-forwarding-reference-overload): forwarding ctor will
-            U&& value)       // not shadow copy ctor, because U is a different type
-            : object_(std::forward<U>(value)) {}
+        explicit ShapeModel(ConcreteShape&& concrete_shape)
+            // Copy-construct or move-construct the concrete type.
+            : object_{std::forward<ConcreteShape>(concrete_shape)} {}
 
-        void draw() const override {
-            ::draw(object_); // XXX: why is ADL not working?
+        void do_draw() const override {
+            // Call free draw() on objects implementing the Shape interface.
+            draw(object_);
         }
 
         [[nodiscard]] std::unique_ptr<ShapeConcept> clone() const override {
@@ -39,16 +50,24 @@ class Shape {
         }
 
       private:
-        T object_;
+        ConcreteShape object_;
     };
 
-    friend void draw(Shape const& shape) { shape.pimpl_->draw(); }
-
   public:
-    template <typename T> explicit Shape(T const& x) : pimpl_(new ShapeModel<T>(x)) {}
+    template <typename ConcreteShape,
+              // Make sure that templated forwarding constructor does not hide the copy constructor.
+              // Another very important thing is to decay the ConcreteShape before comparison,
+              // otherwise Shape& binds to this constructor.
+              std::enable_if_t<!std::is_same_v<Shape, std::decay_t<ConcreteShape>>, bool> = true>
+    explicit Shape(ConcreteShape&& concrete_shape)
+        // Strip the reference, so that either a copy or a move occurs, but not reference binding.
+        : pimpl_{std::make_unique<ShapeModel<std::remove_reference_t<ConcreteShape>>>(
+              std::forward<std::remove_reference_t<ConcreteShape>>(concrete_shape))} {}
 
-    Shape(Shape const& other) { pimpl_ = other.pimpl_->clone(); }
+    // Deep copy of the concrete shape object.
+    Shape(Shape const& other) : pimpl_{other.pimpl_->clone()} {}
 
+    // Deep copy of the concrete shape object.
     Shape& operator=(Shape const& rhs) {
         if (&rhs != this) {
             pimpl_ = rhs.pimpl_->clone();
@@ -56,10 +75,13 @@ class Shape {
         return *this;
     }
 
-    Shape(Shape&& other) noexcept = default;
-    Shape& operator=(Shape&& rhs) noexcept = default;
+    // unique_ptr is movable by default.
+    Shape(Shape&&) noexcept = default;
+    Shape& operator=(Shape&&) noexcept = default;
+
     ~Shape() = default;
 
   private:
+    // Pointer to a ShapeModel, which has a member object of the concrete type.
     std::unique_ptr<ShapeConcept> pimpl_;
 };
