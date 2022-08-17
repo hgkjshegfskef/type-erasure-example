@@ -5,6 +5,11 @@
 
 int main() {
     Circle c{3};
+    get_prop(c) = 4;
+    int& i1 = get_prop(c);
+    int& i2 = get_prop(c);
+    const Circle cc{3};
+    int const& i3 = get_prop(cc);
     Shape s1{c};
     Shape s2{Circle{3.0}};
     Shape s4{Shape{Circle{3.0}}};

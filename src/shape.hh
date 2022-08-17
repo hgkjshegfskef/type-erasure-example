@@ -14,6 +14,12 @@ class Shape {
         shape.pimpl_->do_draw();
     }
 
+    template <typename S = Shape>
+    friend std::enable_if_t<!std::is_const_v<S>, int&> get_prop(Shape& shape) {
+        return shape.pimpl_->do_get_prop();
+    }
+    friend int const& get_prop(Shape const& shape) { return shape.pimpl_->do_get_prop(); }
+
     class ShapeConcept {
       public:
         virtual ~ShapeConcept() = 0;
@@ -22,6 +28,9 @@ class Shape {
         // without the do_ prefix, but in order to facilitate ADL in finding the free functions
         // implementing the interface, the virtual interface functions must be named differently.
         virtual void do_draw() const = 0;
+
+        //        virtual int& do_get_prop() = 0;
+        [[nodiscard]] virtual int const& do_get_prop() const = 0;
 
         // Make ShapeConcept's children copyable through ShapeConcept pointer.
         [[nodiscard]] virtual std::unique_ptr<ShapeConcept> clone() const = 0;
@@ -44,6 +53,12 @@ class Shape {
             // Call free draw() on objects implementing the Shape interface.
             draw(object_);
         }
+
+        template <typename C = ConcreteShape>
+        std::enable_if_t<!std::is_const_v<C>, int&> do_get_prop() {
+            return get_prop(object_);
+        }
+        [[nodiscard]] int const& do_get_prop() const override { return get_prop(object_); }
 
         [[nodiscard]] std::unique_ptr<ShapeConcept> clone() const override {
             return std::make_unique<ShapeModel>(*this);
@@ -85,3 +100,5 @@ class Shape {
     // Pointer to a ShapeModel, which has a member object of the concrete type.
     std::unique_ptr<ShapeConcept> pimpl_;
 };
+
+inline Shape::ShapeConcept::~ShapeConcept() = default;

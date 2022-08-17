@@ -2,6 +2,8 @@
 
 class Circle {
   public:
+    int prop{};
+
     explicit Circle(double radius) : radius_(radius) {}
 
     [[nodiscard]] double get_radius() const noexcept { return radius_; }
